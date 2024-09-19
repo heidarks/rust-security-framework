@@ -131,6 +131,7 @@ pub struct ItemSearchOptions {
     load_data: bool,
     limit: Option<Limit>,
     trusted_only: Option<bool>,
+    secure_enclave_only: Option<bool>,
     label: Option<CFString>,
     service: Option<CFString>,
     subject: Option<CFString>,
@@ -224,6 +225,13 @@ impl ItemSearchOptions {
     #[inline(always)]
     pub fn trusted_only(&mut self, trusted_only: Option<bool>) -> &mut Self {
         self.trusted_only = trusted_only;
+        self
+    }
+
+    /// Only search the secure enclave.
+    #[inline(always)]
+    pub fn secure_enclave_only(&mut self, secure_enclave_only: Option<bool>) -> &mut Self {
+        self.secure_enclave_only = secure_enclave_only;
         self
     }
 
@@ -353,6 +361,18 @@ impl ItemSearchOptions {
                 params.add(
                     &kSecMatchTrustedOnly.to_void(),
                     &(if *trusted_only {
+                        CFBoolean::true_value()
+                    } else {
+                        CFBoolean::false_value()
+                    })
+                    .to_void()
+                );
+            }
+
+            if let Some(ref secure_enclave_only) = self.secure_enclave_only {
+                params.add(
+                    &kSecAttrTokenID.to_void(),
+                    &(if *secure_enclave_only {
                         CFBoolean::true_value()
                     } else {
                         CFBoolean::false_value()
