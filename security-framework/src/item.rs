@@ -371,8 +371,11 @@ impl ItemSearchOptions {
             }
 
             if let Some(ref token) = self.token {
+                println!("checking token");
                 match token {
-                    Token::Software => {}
+                    Token::Software => {
+                        println!("token: software");
+                    }
                     Token::SecureEnclave => {
                         params.add(
                             &kSecAttrTokenID.to_void(),
