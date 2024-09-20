@@ -8,6 +8,7 @@ use core_foundation::date::CFDate;
 use core_foundation::dictionary::{CFDictionary, CFMutableDictionary};
 use core_foundation::number::CFNumber;
 use core_foundation::string::CFString;
+
 use core_foundation_sys::base::{CFCopyDescription, CFGetTypeID, CFRelease, CFTypeRef};
 use core_foundation_sys::string::CFStringRef;
 use security_framework_sys::item::*;
@@ -22,7 +23,7 @@ use crate::base::Result;
 use crate::certificate::SecCertificate;
 use crate::cvt;
 use crate::identity::SecIdentity;
-use crate::key::SecKey;
+use crate::key::{SecKey, Token};
 #[cfg(target_os = "macos")]
 use crate::os::macos::keychain::SecKeychain;
 
@@ -131,7 +132,7 @@ pub struct ItemSearchOptions {
     load_data: bool,
     limit: Option<Limit>,
     trusted_only: Option<bool>,
-    secure_enclave_only: Option<bool>,
+    token: Option<Token>,
     label: Option<CFString>,
     service: Option<CFString>,
     subject: Option<CFString>,
@@ -228,10 +229,10 @@ impl ItemSearchOptions {
         self
     }
 
-    /// Only search the secure enclave.
+    /// Only search the secure enclave
     #[inline(always)]
-    pub fn secure_enclave_only(&mut self, secure_enclave_only: Option<bool>) -> &mut Self {
-        self.secure_enclave_only = secure_enclave_only;
+    pub fn token(&mut self, token: Token) -> &mut Self {
+        self.token = Some(token);
         self
     }
 
@@ -369,17 +370,13 @@ impl ItemSearchOptions {
                 );
             }
 
-            if let Some(ref secure_enclave_only) = self.secure_enclave_only {
+            if let Some(ref _token) = self.token{
                 params.add(
-                    &kSecAttrTokenID.to_void(),
-                    &(if *secure_enclave_only {
-                        CFBoolean::true_value()
-                    } else {
-                        CFBoolean::false_value()
-                    })
-                    .to_void()
+                     &kSecAttrTokenID.to_void(),
+                     &kSecAttrTokenIDSecureEnclave.to_void(),
                 );
             }
+
 
             if let Some(ref service) = self.service {
                 params.add(
