@@ -43,6 +43,8 @@ extern "C" {
     pub static kSecAttrTokenID: CFStringRef;
     #[cfg(any(feature = "OSX_10_12", target_os = "ios", target_os = "tvos", target_os = "watchos", target_os = "visionos"))]
     pub static kSecAttrTokenIDSecureEnclave: CFStringRef;
+    #[cfg(any(feature = "OSX_10_12", target_os = "ios", target_os = "tvos", target_os = "watchos", target_os = "visionos"))]
+    pub static kSecAttrTokenIDSecureElement: CFStringRef;
 
     pub static kSecAttrKeySizeInBits: CFStringRef;
 

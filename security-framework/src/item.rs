@@ -373,6 +373,10 @@ impl ItemSearchOptions {
             match self.token.as_ref().unwrap_or(&Token::Software) {
                 Token::Software => {
                     println!("token: software");
+                    params.add(
+                        &kSecAttrTokenID.to_void(),
+                        &kSecAttrTokenIDSecureElement.to_void(),
+                    );
                 },
                 Token::SecureEnclave => {
                     println!("token: secure enclave");
