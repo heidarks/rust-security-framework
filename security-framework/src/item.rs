@@ -370,18 +370,13 @@ impl ItemSearchOptions {
                 );
             }
 
-            if let Some(ref token) = self.token {
-                println!("checking token");
-                match token {
-                    Token::Software => {
-                        println!("token: software");
-                    }
-                    Token::SecureEnclave => {
-                        params.add(
-                            &kSecAttrTokenID.to_void(),
-                            &kSecAttrTokenIDSecureEnclave.to_void(),
-                        );
-                    }
+            match self.token.as_ref().unwrap_or(&Token::Software) {
+                Token::Software => {},
+                Token::SecureEnclave => {
+                    params.add(
+                        &kSecAttrTokenID.to_void(),
+                        &kSecAttrTokenIDSecureEnclave.to_void(),
+                    );
                 }
             }
 
