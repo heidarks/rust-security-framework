@@ -370,11 +370,16 @@ impl ItemSearchOptions {
                 );
             }
 
-            if let Some(ref _token) = self.token{
-                params.add(
-                     &kSecAttrTokenID.to_void(),
-                     &kSecAttrTokenIDSecureEnclave.to_void(),
-                );
+            if let Some(ref token) = self.token {
+                match token {
+                    Token::Software => {}
+                    Token::SecureEnclave => {
+                        params.add(
+                            &kSecAttrTokenID.to_void(),
+                            &kSecAttrTokenIDSecureEnclave.to_void(),
+                        );
+                    }
+                }
             }
 
 
@@ -384,7 +389,7 @@ impl ItemSearchOptions {
                     &service.to_void(),
                 );
             }
-            
+
             #[cfg(target_os = "macos")]
             {
                 if let Some(ref subject) = self.subject {
